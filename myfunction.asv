@@ -1,0 +1,26 @@
+% myfunction.m
+
+%%
+clear;
+clc;
+
+info = importdata('TFData.txt');
+t = [0:0.01:0.74];
+x = [t]';
+y = -1*info;
+%a = polyfit(x,y,1) % 2nd-order polinomial
+
+data = [x,y];
+a0=[0; 1]; % initial value
+a = lsqnonlin(@(a)my_function(a,data),a0);
+ybar = (1/(a(1)- a(2)))*(exp(-1*a(2)*x) - exp(-1*a(1)*x)); % calculate the values from the fitted model
+plot(x,y,'ro',x, ybar,'b-','LineWidth',3, 'MarkerSize',10); 
+grid;
+% simultaneously display the experimental 
+
+function yerr = my_function(a,data)
+x=data(:,1);
+y=data(:,2);
+yfit = (1/(a(2)- a(1)))*(exp(-1*a(1)*x) - exp(-1*a(2)*x));
+yerr=(y-yfit); % the objective is to minimise the sum of the squares of this error
+end
